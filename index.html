@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animated Login</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #6c63ff, #a084ff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* CONTAINER */
+.container {
+    position: relative;
+    width: 90%;
+    max-width: 350px;
+}
+
+/* FORM */
+.login-box {
+    position: relative;
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    transform: translateX(120%);
+    opacity: 0;
+    transition: 0.6s ease;
+}
+
+.login-box.active {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.login-box h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: #6c63ff;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* CHARACTER */
+.character {
+    position: absolute;
+    bottom: -10px;
+    left: -150px;
+    width: 130px;
+    animation: moveCharacter 3s forwards;
+}
+
+/* WALK BACK + PULL EFFECT */
+@keyframes moveCharacter {
+    0% {
+        left: -150px;
+        transform: scaleX(-1);
+    }
+    50% {
+        left: 10px;
+        transform: scaleX(-1);
+    }
+    70% {
+        left: 10px;
+    }
+    100% {
+        left: -30px;
+        transform: scaleX(1);
+    }
+}
+
+/* LEAN EFFECT */
+.character.final {
+    transform: rotate(-5deg);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    
+    <img src="character.png" class="character" id="character">
+
+    <div class="login-box" id="loginBox">
+        <h2>Connexion</h2>
+        <input type="email" placeholder="Email">
+        <input type="password" placeholder="Mot de passe">
+        <button>Se connecter</button>
+    </div>
+
+</div>
+
+<script>
+
+setTimeout(() => {
+    document.getElementById("loginBox").classList.add("active");
+}, 1500);
+
+setTimeout(() => {
+    document.getElementById("character").classList.add("final");
+}, 3000);
+
+</script>
+
+</body>
+</html>
