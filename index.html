@@ -1,131 +1,186 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Animated Login</title>
-
-<style>
-body {
-    margin: 0;
-    height: 100vh;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #6c63ff, #a084ff);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* CONTAINER */
-.container {
-    position: relative;
-    width: 90%;
-    max-width: 350px;
-}
-
-/* FORM */
-.login-box {
-    position: relative;
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    transform: translateX(120%);
-    opacity: 0;
-    transition: 0.6s ease;
-}
-
-.login-box.active {
-    transform: translateX(0);
-    opacity: 1;
-}
-
-.login-box h2 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-}
-
-button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    background: #6c63ff;
-    color: white;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-/* CHARACTER */
-.character {
-    position: absolute;
-    bottom: -10px;
-    left: -150px;
-    width: 130px;
-    animation: moveCharacter 3s forwards;
-}
-
-/* WALK BACK + PULL EFFECT */
-@keyframes moveCharacter {
-    0% {
-        left: -150px;
-        transform: scaleX(-1);
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login animé</title>
+  <style>
+    * {
+      box-sizing: border-box;
     }
-    50% {
-        left: 10px;
-        transform: scaleX(-1);
-    }
-    70% {
-        left: 10px;
-    }
-    100% {
-        left: -30px;
-        transform: scaleX(1);
-    }
-}
 
-/* LEAN EFFECT */
-.character.final {
-    transform: rotate(-5deg);
-}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #7b78ff, #b1a6ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-</style>
+    .scene {
+      position: relative;
+      width: min(92vw, 390px);
+      height: 620px;
+      overflow: hidden;
+    }
+
+    .login-box {
+      position: absolute;
+      left: 95px;
+      top: 160px;
+      width: 250px;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 18px;
+      padding: 22px 18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.18);
+      transform: translateX(220px);
+      opacity: 0;
+      transition: transform 1s ease, opacity 0.7s ease;
+      z-index: 2;
+    }
+
+    .login-box.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .login-box h2 {
+      margin: 0 0 16px;
+      text-align: center;
+      font-size: 22px;
+      color: #333;
+    }
+
+    .field {
+      width: 100%;
+      padding: 13px 14px;
+      margin-bottom: 12px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 15px;
+      color: #fff;
+      background: #6f6af8;
+      cursor: pointer;
+    }
+
+    .character-wrap {
+      position: absolute;
+      left: -165px;
+      bottom: 18px;
+      width: 150px;
+      z-index: 3;
+      animation: enterBackward 3.2s ease forwards;
+    }
+
+    .character {
+      width: 100%;
+      display: block;
+      transform: scaleX(1);
+      transform-origin: center;
+    }
+
+    /* petit effet de pas */
+    .character-wrap.walking {
+      animation:
+        enterBackward 3.2s ease forwards,
+        bob 0.45s ease-in-out infinite;
+    }
+
+    .character-wrap.final {
+      left: 18px;
+      bottom: 14px;
+      animation: none;
+      transform: rotate(-4deg);
+    }
+
+    .pull-line {
+      position: absolute;
+      left: 118px;
+      top: 290px;
+      width: 0;
+      height: 4px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 10px;
+      z-index: 1;
+      opacity: 0;
+      transition: width 0.8s ease, opacity 0.3s ease;
+    }
+
+    .pull-line.show {
+      width: 55px;
+      opacity: 1;
+    }
+
+    @keyframes enterBackward {
+      0% {
+        left: -165px;
+      }
+      25% {
+        left: -110px;
+      }
+      50% {
+        left: -45px;
+      }
+      75% {
+        left: 5px;
+      }
+      100% {
+        left: 18px;
+      }
+    }
+
+    @keyframes bob {
+      0%, 100% {
+        translate: 0 0;
+      }
+      50% {
+        translate: 0 -6px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-
-<div class="container">
-    
-    <img src="character.png" class="character" id="character">
+  <div class="scene">
+    <div class="pull-line" id="pullLine"></div>
 
     <div class="login-box" id="loginBox">
-        <h2>Connexion</h2>
-        <input type="email" placeholder="Email">
-        <input type="password" placeholder="Mot de passe">
-        <button>Se connecter</button>
+      <h2>Connexion</h2>
+      <input class="field" type="email" placeholder="Email" />
+      <input class="field" type="password" placeholder="Mot de passe" />
+      <button class="btn">Se connecter</button>
     </div>
 
-</div>
+    <div class="character-wrap walking" id="characterWrap">
+      <img src="personnage.png" alt="Personnage" class="character" />
+    </div>
+  </div>
 
-<script>
+  <script>
+    const loginBox = document.getElementById("loginBox");
+    const characterWrap = document.getElementById("characterWrap");
+    const pullLine = document.getElementById("pullLine");
 
-setTimeout(() => {
-    document.getElementById("loginBox").classList.add("active");
-}, 1500);
+    setTimeout(() => {
+      pullLine.classList.add("show");
+      loginBox.classList.add("show");
+    }, 1400);
 
-setTimeout(() => {
-    document.getElementById("character").classList.add("final");
-}, 3000);
-
-</script>
-
+    setTimeout(() => {
+      characterWrap.classList.remove("walking");
+      characterWrap.classList.add("final");
+    }, 3200);
+  </script>
 </body>
 </html>
