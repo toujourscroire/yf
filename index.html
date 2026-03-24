@@ -3,184 +3,511 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login animé</title>
+  <title>Animation Bible Pro</title>
+
   <style>
+    :root {
+      --bg1: #f8efdf;
+      --bg2: #f1dfbb;
+      --bg3: #ead2a4;
+      --shadow: 0 30px 60px rgba(102, 73, 15, 0.18);
+    }
+
     * {
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.7), transparent 30%),
+        radial-gradient(circle at 80% 25%, rgba(255,255,255,0.35), transparent 25%),
+        linear-gradient(160deg, var(--bg1), var(--bg2) 55%, var(--bg3));
     }
 
     body {
-      margin: 0;
-      min-height: 100vh;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #7b78ff, #b1a6ff);
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
     }
 
-    .scene {
+    .stage {
       position: relative;
-      width: min(92vw, 390px);
-      height: 620px;
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
+      isolation: isolate;
     }
 
-    .login-box {
+    /* halo de fond */
+    .glow {
       position: absolute;
-      left: 95px;
-      top: 160px;
-      width: 250px;
-      background: rgba(255, 255, 255, 0.96);
-      border-radius: 18px;
-      padding: 22px 18px;
-      box-shadow: 0 18px 40px rgba(0,0,0,.18);
-      transform: translateX(220px);
-      opacity: 0;
-      transition: transform 1s ease, opacity 0.7s ease;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(255, 243, 214, 0.95), transparent 32%),
+        radial-gradient(circle at 60% 52%, rgba(255, 225, 157, 0.28), transparent 38%);
+      z-index: 0;
+    }
+
+    /* légère ambiance cinématique */
+    .grain {
+      position: absolute;
+      inset: 0;
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 10;
+      background-image:
+        radial-gradient(#000 0.6px, transparent 0.6px);
+      background-size: 9px 9px;
+      mix-blend-mode: multiply;
+    }
+
+    /* petit texte discret */
+    .caption {
+      position: absolute;
+      top: 26px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.42);
+      backdrop-filter: blur(10px);
+      color: #b7852d;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.4px;
+      z-index: 5;
+      box-shadow: 0 10px 25px rgba(90, 60, 15, 0.08);
+    }
+
+    .scene-wrap {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(88vw, 560px);
+      aspect-ratio: 3 / 4;
+      transform: translate(-50%, -50%);
       z-index: 2;
     }
 
-    .login-box.show {
-      transform: translateX(0);
-      opacity: 1;
-    }
-
-    .login-box h2 {
-      margin: 0 0 16px;
-      text-align: center;
-      font-size: 22px;
-      color: #333;
-    }
-
-    .field {
-      width: 100%;
-      padding: 13px 14px;
-      margin-bottom: 12px;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      font-size: 14px;
-      outline: none;
-    }
-
-    .btn {
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-      padding: 13px;
-      font-size: 15px;
-      color: #fff;
-      background: #6f6af8;
-      cursor: pointer;
-    }
-
-    .character-wrap {
+    /* L'image complète */
+    .scene {
       position: absolute;
-      left: -165px;
-      bottom: 18px;
-      width: 150px;
-      z-index: 3;
-      animation: enterBackward 3.2s ease forwards;
-    }
-
-    .character {
+      inset: 0;
       width: 100%;
-      display: block;
-      transform: scaleX(1);
-      transform-origin: center;
+      height: 100%;
+      object-fit: contain;
+      user-select: none;
+      pointer-events: none;
+      filter: drop-shadow(0 24px 45px rgba(104, 70, 17, 0.18));
+      transform-origin: 50% 70%;
+      opacity: 0;
     }
 
-    /* petit effet de pas */
-    .character-wrap.walking {
-      animation:
-        enterBackward 3.2s ease forwards,
-        bob 0.45s ease-in-out infinite;
+    /* clone flou pour un effet premium */
+    .scene.blur-shadow {
+      opacity: 0;
+      filter: blur(18px) saturate(1.1);
+      transform-origin: 50% 70%;
+      mix-blend-mode: multiply;
+      z-index: -1;
     }
 
-    .character-wrap.final {
-      left: 18px;
-      bottom: 14px;
-      animation: none;
-      transform: rotate(-4deg);
-    }
-
-    .pull-line {
+    /* Sol visuel */
+    .floor {
       position: absolute;
-      left: 118px;
-      top: 290px;
-      width: 0;
-      height: 4px;
-      background: rgba(255,255,255,0.7);
-      border-radius: 10px;
+      left: 50%;
+      bottom: 8%;
+      width: min(72vw, 500px);
+      height: 46px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(146, 106, 36, 0.22), rgba(146, 106, 36, 0.02) 70%, transparent 80%);
+      filter: blur(10px);
       z-index: 1;
       opacity: 0;
-      transition: width 0.8s ease, opacity 0.3s ease;
+      animation: floorFade 1s ease 0.3s forwards;
     }
 
-    .pull-line.show {
-      width: 55px;
-      opacity: 1;
+    /* Effets de mouvement */
+    .motion-lines {
+      position: absolute;
+      left: 12%;
+      top: 42%;
+      width: 20%;
+      height: 12%;
+      opacity: 0;
+      z-index: 1;
+      filter: blur(0.2px);
     }
 
-    @keyframes enterBackward {
+    .motion-lines::before,
+    .motion-lines::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.9), rgba(255,255,255,0)),
+        linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.65), rgba(255,255,255,0)),
+        linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.45), rgba(255,255,255,0));
+      background-repeat: no-repeat;
+      background-size: 100% 5px, 85% 4px, 70% 3px;
+      background-position: 0 8%, 0 48%, 0 85%;
+    }
+
+    .motion-lines.show {
+      animation: motionFlash 0.9s ease 2.9s 2;
+    }
+
+    /* Animation principale */
+    .scene.animate {
+      animation: sceneCinematic 8s cubic-bezier(.22,.61,.36,1) forwards;
+    }
+
+    .scene.blur-shadow.animate {
+      animation: sceneCinematicShadow 8s cubic-bezier(.22,.61,.36,1) forwards;
+    }
+
+    /* Pulsation à la fin */
+    .end-shine {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(65vw, 420px);
+      height: min(65vw, 420px);
+      transform: translate(-50%, -50%) scale(0.6);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 235, 190, 0.58), transparent 70%);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 0;
+      animation: endGlow 1.3s ease 6.2s forwards;
+    }
+
+    .replay {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.75);
+      color: #9a6d23;
+      font-weight: 700;
+      box-shadow: 0 12px 30px rgba(90, 60, 15, 0.12);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      z-index: 20;
+    }
+
+    .replay:active {
+      transform: scale(0.98);
+    }
+
+    @keyframes floorFade {
+      to { opacity: 1; }
+    }
+
+    /*
+      Timeline
+      0%   -> hors champ à droite
+      18%  -> arrivée en douceur
+      34%  -> petit recul
+      48%  -> rotation / retournement
+      70%  -> traction forte de l'interface
+      100% -> pose finale
+    */
+    @keyframes sceneCinematic {
       0% {
-        left: -165px;
+        opacity: 0;
+        transform:
+          translate(62vw, 12vh)
+          scale(0.58)
+          rotate(0deg)
+          scaleX(1);
       }
-      25% {
-        left: -110px;
+
+      8% {
+        opacity: 1;
+        transform:
+          translate(38vw, 7vh)
+          scale(0.72)
+          rotate(-1deg)
+          scaleX(1);
+      }
+
+      18% {
+        opacity: 1;
+        transform:
+          translate(8vw, 1vh)
+          scale(0.92)
+          rotate(-2deg)
+          scaleX(1);
+      }
+
+      /* recule légèrement */
+      30% {
+        opacity: 1;
+        transform:
+          translate(16vw, 2vh)
+          scale(0.9)
+          rotate(1deg)
+          scaleX(1);
+      }
+
+      /* bascule / retourne */
+      40% {
+        opacity: 1;
+        transform:
+          translate(11vw, 1vh)
+          scale(0.92)
+          rotate(-2deg)
+          scaleX(0.72);
+      }
+
+      48% {
+        opacity: 1;
+        transform:
+          translate(3vw, 0vh)
+          scale(0.94)
+          rotate(-3deg)
+          scaleX(-1);
+      }
+
+      /* commence à tirer */
+      60% {
+        opacity: 1;
+        transform:
+          translate(-5vw, -1vh)
+          scale(1.02)
+          rotate(-5deg)
+          scaleX(-1);
+      }
+
+      72% {
+        opacity: 1;
+        transform:
+          translate(-11vw, -1.5vh)
+          scale(1.08)
+          rotate(-7deg)
+          scaleX(-1);
+      }
+
+      /* pose finale */
+      85% {
+        opacity: 1;
+        transform:
+          translate(-8vw, -1vh)
+          scale(1.04)
+          rotate(-4deg)
+          scaleX(-1);
+      }
+
+      100% {
+        opacity: 1;
+        transform:
+          translate(-8vw, -1vh)
+          scale(1.04)
+          rotate(-4deg)
+          scaleX(-1);
+      }
+    }
+
+    @keyframes sceneCinematicShadow {
+      0% {
+        opacity: 0;
+        transform:
+          translate(62vw, 12vh)
+          scale(0.58)
+          rotate(0deg)
+          scaleX(1);
+      }
+
+      8% {
+        opacity: 0.15;
+        transform:
+          translate(38vw, 7vh)
+          scale(0.72)
+          rotate(-1deg)
+          scaleX(1);
+      }
+
+      18% {
+        opacity: 0.18;
+        transform:
+          translate(8vw, 1vh)
+          scale(0.92)
+          rotate(-2deg)
+          scaleX(1);
+      }
+
+      30% {
+        opacity: 0.16;
+        transform:
+          translate(16vw, 2vh)
+          scale(0.9)
+          rotate(1deg)
+          scaleX(1);
+      }
+
+      40% {
+        opacity: 0.15;
+        transform:
+          translate(11vw, 1vh)
+          scale(0.92)
+          rotate(-2deg)
+          scaleX(0.72);
+      }
+
+      48% {
+        opacity: 0.18;
+        transform:
+          translate(3vw, 0vh)
+          scale(0.94)
+          rotate(-3deg)
+          scaleX(-1);
+      }
+
+      60% {
+        opacity: 0.20;
+        transform:
+          translate(-5vw, -1vh)
+          scale(1.02)
+          rotate(-5deg)
+          scaleX(-1);
+      }
+
+      72% {
+        opacity: 0.22;
+        transform:
+          translate(-11vw, -1.5vh)
+          scale(1.08)
+          rotate(-7deg)
+          scaleX(-1);
+      }
+
+      85% {
+        opacity: 0.18;
+        transform:
+          translate(-8vw, -1vh)
+          scale(1.04)
+          rotate(-4deg)
+          scaleX(-1);
+      }
+
+      100% {
+        opacity: 0.18;
+        transform:
+          translate(-8vw, -1vh)
+          scale(1.04)
+          rotate(-4deg)
+          scaleX(-1);
+      }
+    }
+
+    @keyframes motionFlash {
+      0%   { opacity: 0; transform: translateX(0); }
+      20%  { opacity: 0.75; transform: translateX(-6px); }
+      100% { opacity: 0; transform: translateX(-18px); }
+    }
+
+    @keyframes endGlow {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.65);
       }
       50% {
-        left: -45px;
-      }
-      75% {
-        left: 5px;
+        opacity: 0.85;
+        transform: translate(-50%, -50%) scale(1);
       }
       100% {
-        left: 18px;
+        opacity: 0.35;
+        transform: translate(-50%, -50%) scale(1.15);
       }
     }
 
-    @keyframes bob {
-      0%, 100% {
-        translate: 0 0;
+    @media (max-width: 480px) {
+      .caption {
+        top: 18px;
+        font-size: 13px;
+        padding: 9px 14px;
       }
-      50% {
-        translate: 0 -6px;
+
+      .scene-wrap {
+        width: 94vw;
+      }
+
+      .replay {
+        right: 14px;
+        bottom: 14px;
+        padding: 11px 14px;
+        font-size: 13px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="scene">
-    <div class="pull-line" id="pullLine"></div>
+  <div class="stage">
+    <div class="glow"></div>
+    <div class="floor"></div>
+    <div class="end-shine"></div>
+    <div class="caption">Psaume 145:18 ✝️</div>
 
-    <div class="login-box" id="loginBox">
-      <h2>Connexion</h2>
-      <input class="field" type="email" placeholder="Email" />
-      <input class="field" type="password" placeholder="Mot de passe" />
-      <button class="btn">Se connecter</button>
+    <div class="scene-wrap">
+      <div class="motion-lines" id="motionLines"></div>
+
+      <!-- Ombre / flou -->
+      <img
+        src="bible-scene.png"
+        alt="Scène Bible animée"
+        class="scene blur-shadow"
+        id="sceneShadow"
+      />
+
+      <!-- Image principale -->
+      <img
+        src="bible-scene.png"
+        alt="Scène Bible animée"
+        class="scene"
+        id="sceneMain"
+      />
     </div>
 
-    <div class="character-wrap walking" id="characterWrap">
-      <img src="personnage.png" alt="Personnage" class="character" />
-    </div>
+    <button class="replay" id="replayBtn">Relancer</button>
+    <div class="grain"></div>
   </div>
 
   <script>
-    const loginBox = document.getElementById("loginBox");
-    const characterWrap = document.getElementById("characterWrap");
-    const pullLine = document.getElementById("pullLine");
+    const sceneMain = document.getElementById("sceneMain");
+    const sceneShadow = document.getElementById("sceneShadow");
+    const replayBtn = document.getElementById("replayBtn");
+    const motionLines = document.getElementById("motionLines");
 
-    setTimeout(() => {
-      pullLine.classList.add("show");
-      loginBox.classList.add("show");
-    }, 1400);
+    function startAnimation() {
+      sceneMain.classList.remove("animate");
+      sceneShadow.classList.remove("animate");
+      motionLines.classList.remove("show");
 
-    setTimeout(() => {
-      characterWrap.classList.remove("walking");
-      characterWrap.classList.add("final");
-    }, 3200);
+      // force reflow pour rejouer l'animation
+      void sceneMain.offsetWidth;
+      void sceneShadow.offsetWidth;
+
+      sceneMain.classList.add("animate");
+      sceneShadow.classList.add("animate");
+
+      setTimeout(() => {
+        motionLines.classList.add("show");
+      }, 2850);
+    }
+
+    window.addEventListener("load", startAnimation);
+    replayBtn.addEventListener("click", startAnimation);
   </script>
 </body>
 </html>
